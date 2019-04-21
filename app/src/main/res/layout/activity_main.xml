@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:weightSum="100"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark">
+
+    <View
+        android:layout_weight="35"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+
+    </View>
+    <Button
+        android:layout_weight="5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Inventory"
+        android:onClick="inventoryButtonOnClick"
+        android:textSize="20sp"/>
+    <View
+        android:layout_weight="20"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+
+    </View>
+    <Button
+        android:text="Local Vendors"
+        android:onClick="localVendorButtonOnClick"
+        android:layout_weight="5"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textSize="20sp"/>
+</LinearLayout>
