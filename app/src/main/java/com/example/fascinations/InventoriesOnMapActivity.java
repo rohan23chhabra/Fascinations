@@ -33,10 +33,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
+import java.sql.Time;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class InventoriesOnMapActivity extends FragmentActivity
         implements GoogleMap.OnMyLocationButtonClickListener,
@@ -49,6 +54,8 @@ public class InventoriesOnMapActivity extends FragmentActivity
             100;
     List<InventoryOwner> ownerList = new ArrayList<>();
 
+    Location currentLocation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +66,17 @@ public class InventoriesOnMapActivity extends FragmentActivity
         mapFragment.getMapAsync(this);
         fusedLocationClient =
                 LocationServices.getFusedLocationProviderClient(this);
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Logic to handle location object
+                            currentLocation = location;
+                        }
+                    }
+                });
     }
 
 
@@ -101,7 +119,11 @@ public class InventoriesOnMapActivity extends FragmentActivity
                             ownerList.add(owner);
                             LatLng latLng = owner.getLocation();
                             Log.i("owner-mc", owner.toString());
-                            if (owner.getVerified().equals("true")) {
+                            Date now = Calendar.getInstance().getTime();
+                            Time openingTime = getTime(owner.getOpeningTime());
+                            Time closingTime = getTime(owner.getClosingTime());
+                            if (owner.getVerified().equals("true") && owner.getOpen().equals(
+                                    "true") && checkTime(openingTime, now, closingTime)) {
                                 Log.i("marker-bc", "bc");
                                 googleMap.addMarker(new MarkerOptions()
                                         .position(latLng)
@@ -119,6 +141,26 @@ public class InventoriesOnMapActivity extends FragmentActivity
 
                     }
                 });
+    }
+
+    private boolean checkTime(Time openingTime, Date now, Time closingTime) {
+        Time nowTime = new Time(now.getHours(), now.getMinutes(), 0);
+        long now_time = nowTime.getTime();
+        long opening_time = openingTime.getTime();
+        long closing_time = closingTime.getTime();
+
+        if (now_time >= opening_time && now_time <= closing_time) {
+            return true;
+        }
+        return false;
+    }
+
+    private Time getTime(String time) {
+        StringTokenizer stringTokenizer = new StringTokenizer(time, ":");
+        int hours = Integer.parseInt(stringTokenizer.nextToken());
+        int minutes = Integer.parseInt(stringTokenizer.nextToken());
+        Time hms = new Time(hours, minutes, 0);
+        return hms;
     }
 
     @Override
@@ -209,7 +251,7 @@ public class InventoriesOnMapActivity extends FragmentActivity
 
     public void seeListOnClick(View view) {
         Intent intent = new Intent(InventoriesOnMapActivity.this, InventoryListActivity.class);
-        intent.putExtra("inventory-list", (Parcelable) ownerList);
+        intent.putExtra("current-location", currentLocation);
         startActivity(intent);
     }
 }
