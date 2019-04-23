@@ -1,27 +1,44 @@
 package com.example.fascinations;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
 
+import com.example.fascinations.core.InventoryOwner;
+import com.example.fascinations.core.User;
+import com.example.fascinations.db.DB;
+import com.example.fascinations.serialize.MyGson;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
-public class InventoryMapActivity extends FragmentActivity
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+public class InventoriesOnMapActivity extends FragmentActivity
         implements GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMyLocationClickListener,
         OnMapReadyCallback {
@@ -30,11 +47,12 @@ public class InventoryMapActivity extends FragmentActivity
     private FusedLocationProviderClient fusedLocationClient;
     public static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION =
             100;
+    List<InventoryOwner> ownerList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_inventory_map);
+        setContentView(R.layout.activity_inventories_on_map);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -54,20 +72,53 @@ public class InventoryMapActivity extends FragmentActivity
      * installed Google Play services and returned to the app.
      */
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(final GoogleMap googleMap) {
         this.googleMap = googleMap;
 
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat
-                    .requestPermissions(InventoryMapActivity.this,
+                    .requestPermissions(InventoriesOnMapActivity.this,
                             new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                             MY_PERMISSIONS_REQUEST_FINE_LOCATION);
         } else {
             setCurrentLocationOnMap();
         }
 
+        DB.getDatabaseReference().child("inventory-owner").addValueEventListener(
+                new ValueEventListener() {
+                    @Override public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Iterator<DataSnapshot> dataSnapshotIterator =
+                                dataSnapshot.getChildren().iterator();
+
+                        while (dataSnapshotIterator.hasNext()) {
+                            DataSnapshot dataSnapshotChild = dataSnapshotIterator.next();
+                            Gson gson = MyGson.getGson();
+                            InventoryOwner owner =
+                                    gson.fromJson(gson.toJson(dataSnapshotChild.getValue()),
+                                            InventoryOwner.class);
+                            ownerList.add(owner);
+                            LatLng latLng = owner.getLocation();
+                            Log.i("owner-mc", owner.toString());
+                            if (owner.getVerified().equals("true")) {
+                                Log.i("marker-bc", "bc");
+                                googleMap.addMarker(new MarkerOptions()
+                                        .position(latLng)
+                                        .title(owner.getName())
+                                        .snippet("Inventory")
+                                        .icon(BitmapDescriptorFactory
+                                                .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                                googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                            }
+                        }
+
+                    }
+
+                    @Override public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     @Override
@@ -154,5 +205,11 @@ public class InventoryMapActivity extends FragmentActivity
     @Override
     public void onMyLocationClick(@NonNull Location location) {
 
+    }
+
+    public void seeListOnClick(View view) {
+        Intent intent = new Intent(InventoriesOnMapActivity.this, InventoryListActivity.class);
+        intent.putExtra("inventory-list", (Parcelable) ownerList);
+        startActivity(intent);
     }
 }

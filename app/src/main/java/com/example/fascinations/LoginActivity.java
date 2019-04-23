@@ -68,8 +68,9 @@ public class LoginActivity
                                     editor.apply();
                                     Intent intent = new Intent(
                                             LoginActivity.this,
-                                            MainActivity.class);
+                                            ChooseBusinessActivity.class);
                                     LoginActivity.this.startActivity(intent);
+                                    finish();
                                 }
                             }
 
@@ -89,7 +90,7 @@ public class LoginActivity
                 Intent signUpIntent = new Intent(LoginActivity.this,
                         PhoneAuthActivity.class);
                 startActivity(signUpIntent);
-
+                finish();
             }
         });
     }

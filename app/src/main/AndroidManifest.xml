@@ -17,7 +17,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PhoneAuthActivity"></activity>
+        <activity android:name=".InventoryListActivity"></activity>
+        <activity android:name=".ChooseBusinessActivity" />
+        <activity android:name=".PhoneAuthActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -31,9 +33,8 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".InventoryMapActivity"
+            android:name=".InventoriesOnMapActivity"
             android:label="@string/title_activity_inventory_map" />
-        <activity android:name=".MainActivity" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".LoginActivity">
             <intent-filter>

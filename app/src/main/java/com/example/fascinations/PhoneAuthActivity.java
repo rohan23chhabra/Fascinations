@@ -120,6 +120,7 @@ public class PhoneAuthActivity extends AppCompatActivity implements
                 intent.putExtra("phone",
                         mPhoneNumberField.getText().toString());
                 PhoneAuthActivity.this.startActivity(intent);
+                finish();
             }
 
             @Override
