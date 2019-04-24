@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,34 +10,47 @@
     <View
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_weight="30"/>
+        android:layout_weight="30" />
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/input_bags_to_enter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:hint="Enter no of bags to store in inventory"
+            android:inputType="number" />
+    </android.support.design.widget.TextInputLayout>
 
     <Button
         android:id="@+id/choose_inventory"
-        android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:layout_gravity="center"
         android:layout_weight="10"
-        android:text="See inventories"
-        android:onClick="inventoryOnClick"/>
+        android:onClick="inventoryOnClick"
+        android:text="See inventories" />
 
     <View
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_weight="30"/>
+        android:layout_weight="30" />
 
     <Button
         android:id="@+id/choose_food_vendor"
-        android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:layout_gravity="center"
         android:layout_weight="10"
-        android:text="Explore Food vendors"
-        android:onClick="foodVendorOnClick"/>
+        android:onClick="foodVendorOnClick"
+        android:text="Explore Food vendors" />
 
     <View
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_weight="30"/>
+        android:layout_weight="30" />
 
 </LinearLayout>

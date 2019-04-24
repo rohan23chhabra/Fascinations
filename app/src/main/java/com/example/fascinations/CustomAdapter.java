@@ -13,8 +13,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.fascinations.core.InventoryOwner;
+import com.example.fascinations.core.InventoryRequest;
+import com.example.fascinations.db.DB;
+import com.example.fascinations.util.SessionDetails;
 import com.squareup.picasso.Picasso;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 class CustomAdapter extends ArrayAdapter<InventoryOwner> {
@@ -30,13 +35,15 @@ class CustomAdapter extends ArrayAdapter<InventoryOwner> {
     private Activity context;
     private List<InventoryOwner> ownerList;
     private Location currentLocation;
+    private int userCapacity;
 
     public CustomAdapter(Activity context, List<InventoryOwner> ownerList,
-                         Location currentLocation) {
+                         Location currentLocation, int userCapacity) {
         super(context, R.layout.inventory_view);
         this.context = context;
         this.ownerList = ownerList;
         this.currentLocation = currentLocation;
+        this.userCapacity = userCapacity;
     }
 
     @Override public View getView(int position, View convertView, ViewGroup parent) {
@@ -55,7 +62,7 @@ class CustomAdapter extends ArrayAdapter<InventoryOwner> {
         final InventoryOwner owner = ownerList.get(position);
         Picasso.get().load(owner.getImageURL())
                 .into(imageView);
-        Location inventoryLocation = new Location("Inventory Location");
+        final Location inventoryLocation = new Location("Inventory Location");
         inventoryLocation.setLatitude(owner.getLocation().latitude);
         inventoryLocation.setLongitude(owner.getLocation().longitude);
         double distance = currentLocation.distanceTo(inventoryLocation);
@@ -68,6 +75,22 @@ class CustomAdapter extends ArrayAdapter<InventoryOwner> {
 
         bookInventory.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
+
+                String userPhoneNumber =
+                        new SessionDetails(context).getSharedPreferences().getString("phone",
+                                "8601444918");
+                long currentTimeMillis = System.currentTimeMillis();
+                Date now = Calendar.getInstance().getTime();
+
+                InventoryRequest inventoryRequest = new InventoryRequest(userPhoneNumber,
+                        owner.getPhoneNumber(),
+                        now.getHours(), now.getMinutes(), now.getSeconds(), currentTimeMillis,
+                        userCapacity);
+                owner.setCapacity(owner.getCapacity() - userCapacity);
+                DB.getDatabaseReference().child("inventory-owner").child(owner.getPhoneNumber())
+                        .child("capacity").setValue(owner.getCapacity());
+                DB.getDatabaseReference().child("pending-inventory-requests")
+                        .child(userPhoneNumber).setValue(inventoryRequest);
 
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(
                         "http://maps.google.com/maps?saddr=" + currentLocation.getLatitude() +

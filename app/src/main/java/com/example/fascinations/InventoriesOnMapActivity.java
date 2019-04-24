@@ -4,17 +4,15 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Parcelable;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 
 import com.example.fascinations.core.InventoryOwner;
-import com.example.fascinations.core.User;
 import com.example.fascinations.db.DB;
 import com.example.fascinations.serialize.MyGson;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -34,11 +32,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 import java.sql.Time;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -53,8 +49,8 @@ public class InventoriesOnMapActivity extends FragmentActivity
     public static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION =
             100;
     List<InventoryOwner> ownerList = new ArrayList<>();
-
     Location currentLocation;
+    int userCapacity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +62,9 @@ public class InventoriesOnMapActivity extends FragmentActivity
         mapFragment.getMapAsync(this);
         fusedLocationClient =
                 LocationServices.getFusedLocationProviderClient(this);
+        currentLocation = new Location("");
+        currentLocation.setLongitude(81.8639);
+        currentLocation.setLatitude(25.4920);
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
@@ -74,9 +73,14 @@ public class InventoriesOnMapActivity extends FragmentActivity
                         if (location != null) {
                             // Logic to handle location object
                             currentLocation = location;
+                        } else {
+
                         }
                     }
                 });
+        Bundle bundle = getIntent().getExtras();
+        assert bundle != null;
+        userCapacity = bundle.getInt("number-of-bags");
     }
 
 
@@ -110,9 +114,11 @@ public class InventoriesOnMapActivity extends FragmentActivity
                         Iterator<DataSnapshot> dataSnapshotIterator =
                                 dataSnapshot.getChildren().iterator();
 
+                        ownerList.clear();
                         while (dataSnapshotIterator.hasNext()) {
                             DataSnapshot dataSnapshotChild = dataSnapshotIterator.next();
                             Gson gson = MyGson.getGson();
+                            Log.i("mera-owner", gson.toJson(dataSnapshotChild.getValue()));
                             InventoryOwner owner =
                                     gson.fromJson(gson.toJson(dataSnapshotChild.getValue()),
                                             InventoryOwner.class);
@@ -122,8 +128,11 @@ public class InventoriesOnMapActivity extends FragmentActivity
                             Date now = Calendar.getInstance().getTime();
                             Time openingTime = getTime(owner.getOpeningTime());
                             Time closingTime = getTime(owner.getClosingTime());
-                            if (owner.getVerified().equals("true") && owner.getOpen().equals(
-                                    "true") && checkTime(openingTime, now, closingTime)) {
+                            boolean isAuthentic = owner.getVerified().equals("true")
+                                    && owner.getOpen().equals("true")
+                                    && checkTime(openingTime, now, closingTime)
+                                    && (userCapacity <= owner.getCapacity());
+                            if (isAuthentic) {
                                 Log.i("marker-bc", "bc");
                                 googleMap.addMarker(new MarkerOptions()
                                         .position(latLng)
@@ -252,6 +261,7 @@ public class InventoriesOnMapActivity extends FragmentActivity
     public void seeListOnClick(View view) {
         Intent intent = new Intent(InventoriesOnMapActivity.this, InventoryListActivity.class);
         intent.putExtra("current-location", currentLocation);
+        intent.putExtra("number-of-bags", userCapacity);
         startActivity(intent);
     }
 }

@@ -1,35 +1,23 @@
 package com.example.fascinations;
 
 import android.Manifest;
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.example.fascinations.core.InventoryOwner;
 import com.example.fascinations.db.DB;
 import com.example.fascinations.serialize.MyGson;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -40,6 +28,7 @@ public class InventoryListActivity extends AppCompatActivity {
 
     List<InventoryOwner> ownerList = new ArrayList<>();
     Location currentLocation;
+    int userCapacity;
 
 
     @Override
@@ -66,17 +55,20 @@ public class InventoryListActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         assert bundle != null;
         currentLocation = (Location) bundle.get("current-location");
+        userCapacity = bundle.getInt("number-of-bags");
 
         getListOfInventories();
 
     }
 
     private void getListOfInventories() {
+
         DB.getDatabaseReference().child("inventory-owner").addValueEventListener(
                 new ValueEventListener() {
                     @Override public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         Iterator<DataSnapshot> dataSnapshotIterator =
                                 dataSnapshot.getChildren().iterator();
+                        ownerList.clear();
                         while (dataSnapshotIterator.hasNext()) {
                             DataSnapshot dataSnapshotChild = dataSnapshotIterator.next();
                             Gson gson = MyGson.getGson();
@@ -87,7 +79,7 @@ public class InventoryListActivity extends AppCompatActivity {
                         }
                         CustomAdapter customAdapter =
                                 new CustomAdapter(InventoryListActivity.this, ownerList,
-                                        currentLocation);
+                                        currentLocation, userCapacity);
                         listView.setAdapter(customAdapter);
                     }
 
