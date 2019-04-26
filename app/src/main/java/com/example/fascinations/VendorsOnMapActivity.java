@@ -12,7 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 
-import com.example.fascinations.core.InventoryOwner;
+import com.example.fascinations.core.VendorOwner;
 import com.example.fascinations.db.DB;
 import com.example.fascinations.serialize.MyGson;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -39,28 +39,26 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class InventoriesOnMapActivity extends FragmentActivity
-        implements GoogleMap.OnMyLocationButtonClickListener,
-        GoogleMap.OnMyLocationClickListener,
-        OnMapReadyCallback {
+public class VendorsOnMapActivity extends FragmentActivity
+        implements OnMapReadyCallback {
 
+    private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 432;
     private GoogleMap googleMap;
     private FusedLocationProviderClient fusedLocationClient;
-    private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION =
-            100;
-    List<InventoryOwner> ownerList = new ArrayList<>();
+    List<VendorOwner> vendorOwnerList = new ArrayList<>();
     Location currentLocation;
-    int userCapacity;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_inventories_on_map);
+        setContentView(R.layout.activity_vendors_on_map);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager()
                         .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
         fusedLocationClient =
                 LocationServices.getFusedLocationProviderClient(this);
         currentLocation = new Location("");
@@ -79,9 +77,6 @@ public class InventoriesOnMapActivity extends FragmentActivity
                         }
                     }
                 });
-        Bundle bundle = getIntent().getExtras();
-        assert bundle != null;
-        userCapacity = bundle.getInt("number-of-bags");
     }
 
 
@@ -102,7 +97,7 @@ public class InventoriesOnMapActivity extends FragmentActivity
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat
-                    .requestPermissions(InventoriesOnMapActivity.this,
+                    .requestPermissions(VendorsOnMapActivity.this,
                             new String[]{
                                     Manifest.permission.ACCESS_FINE_LOCATION},
                             MY_PERMISSIONS_REQUEST_FINE_LOCATION);
@@ -110,64 +105,69 @@ public class InventoriesOnMapActivity extends FragmentActivity
             setCurrentLocationOnMap();
         }
 
-        DB.getDatabaseReference().child("inventory-owner")
-                .addValueEventListener(
-                        new ValueEventListener() {
-                            @Override public void onDataChange(
-                                    @NonNull DataSnapshot dataSnapshot) {
-                                Iterator<DataSnapshot> dataSnapshotIterator =
-                                        dataSnapshot.getChildren().iterator();
+        DB.getDatabaseReference().child("vendor-owner").addValueEventListener(
+                new ValueEventListener() {
+                    @Override public void onDataChange(
+                            @NonNull DataSnapshot dataSnapshot) {
 
-                                ownerList.clear();
-                                while (dataSnapshotIterator.hasNext()) {
-                                    DataSnapshot dataSnapshotChild =
-                                            dataSnapshotIterator.next();
-                                    Gson gson = MyGson.getGson();
-                                    Log.i("mera-owner", gson.toJson(
-                                            dataSnapshotChild.getValue()));
-                                    InventoryOwner owner =
-                                            gson.fromJson(gson.toJson(
-                                                    dataSnapshotChild
-                                                            .getValue()),
-                                                    InventoryOwner.class);
-                                    ownerList.add(owner);
-                                    LatLng latLng = owner.getLocation();
-                                    Log.i("owner-mc", owner.toString());
-                                    Date now = Calendar.getInstance().getTime();
-                                    Time openingTime =
-                                            getTime(owner.getOpeningTime());
-                                    Time closingTime =
-                                            getTime(owner.getClosingTime());
-                                    boolean isAuthentic =
-                                            owner.getVerified().equals("true")
-                                                    && owner.getOpen()
-                                                    .equals("true")
-                                                    && checkTime(openingTime,
-                                                    now, closingTime)
-                                                    && (userCapacity <= owner
-                                                    .getCapacity());
-                                    if (isAuthentic) {
-                                        Log.i("marker-bc", "bc");
-                                        googleMap.addMarker(new MarkerOptions()
-                                                .position(latLng)
-                                                .title(owner.getName())
-                                                .snippet("Inventory")
-                                                .icon(BitmapDescriptorFactory
-                                                        .defaultMarker(
-                                                                BitmapDescriptorFactory.HUE_AZURE)));
-                                        googleMap.animateCamera(
-                                                CameraUpdateFactory
-                                                        .newLatLng(latLng));
-                                    }
-                                }
+                        Iterator<DataSnapshot> dataSnapshotIterator =
+                                dataSnapshot.getChildren().iterator();
 
+                        vendorOwnerList.clear();
+                        while (dataSnapshotIterator.hasNext()) {
+                            DataSnapshot dataSnapshotChild =
+                                    dataSnapshotIterator.next();
+                            Gson gson = MyGson.getGson();
+                            Log.i("mera-owner", gson.toJson(
+                                    dataSnapshotChild.getValue()));
+                            VendorOwner vendorOwner =
+                                    gson.fromJson(gson.toJson(
+                                            dataSnapshotChild.getValue()),
+                                            VendorOwner.class);
+                            vendorOwnerList.add(vendorOwner);
+                            LatLng latLng = vendorOwner.getLocation();
+                            Log.i("owner-mc", vendorOwner.toString());
+                            Date now = Calendar.getInstance().getTime();
+                            Time openingTime =
+                                    getTime(vendorOwner.getOpeningTime());
+                            Time closingTime =
+                                    getTime(vendorOwner.getClosingTime());
+                            boolean isAuthentic =
+                                    vendorOwner.getVerified().equals("true")
+                                            && vendorOwner.getOpen()
+                                            .equals("true")
+                                            && checkTime(openingTime,
+                                            now, closingTime);
+                            if (isAuthentic) {
+                                Log.i("marker-bc", "bc");
+                                googleMap.addMarker(new MarkerOptions()
+                                        .position(latLng)
+                                        .title(vendorOwner.getName())
+                                        .snippet(vendorOwner.getFoodCategory()
+                                                .toString())
+                                        .icon(BitmapDescriptorFactory
+                                                .defaultMarker(
+                                                        BitmapDescriptorFactory.HUE_RED)));
+                                googleMap.animateCamera(
+                                        CameraUpdateFactory
+                                                .newLatLng(latLng));
                             }
+                        }
+                    }
 
-                            @Override public void onCancelled(
-                                    @NonNull DatabaseError databaseError) {
+                    @Override public void onCancelled(
+                            @NonNull DatabaseError databaseError) {
 
-                            }
-                        });
+                    }
+                });
+    }
+
+    private Time getTime(String time) {
+        StringTokenizer stringTokenizer = new StringTokenizer(time, ":");
+        int hours = Integer.parseInt(stringTokenizer.nextToken());
+        int minutes = Integer.parseInt(stringTokenizer.nextToken());
+        Time hms = new Time(hours, minutes, 0);
+        return hms;
     }
 
     private boolean checkTime(Time openingTime, Date now, Time closingTime) {
@@ -180,14 +180,6 @@ public class InventoriesOnMapActivity extends FragmentActivity
             return true;
         }
         return false;
-    }
-
-    private Time getTime(String time) {
-        StringTokenizer stringTokenizer = new StringTokenizer(time, ":");
-        int hours = Integer.parseInt(stringTokenizer.nextToken());
-        int minutes = Integer.parseInt(stringTokenizer.nextToken());
-        Time hms = new Time(hours, minutes, 0);
-        return hms;
     }
 
     @Override
@@ -234,7 +226,10 @@ public class InventoriesOnMapActivity extends FragmentActivity
                                             new MarkerOptions()
                                                     .position(
                                                             currentLocation)
-                                                    .title("Current Location"));
+                                                    .title("Current Location"))
+                                            .setIcon(BitmapDescriptorFactory
+                                                    .defaultMarker(
+                                                            BitmapDescriptorFactory.HUE_BLUE));
                                     googleMap.moveCamera(
                                             CameraUpdateFactory
                                                     .newLatLng(
@@ -267,20 +262,10 @@ public class InventoriesOnMapActivity extends FragmentActivity
                         });
     }
 
-    @Override public boolean onMyLocationButtonClick() {
-        return false;
-    }
-
-    @Override
-    public void onMyLocationClick(@NonNull Location location) {
-
-    }
-
     public void seeListOnClick(View view) {
-        Intent intent = new Intent(InventoriesOnMapActivity.this,
-                InventoryListActivity.class);
+        Intent intent = new Intent(VendorsOnMapActivity.this,
+                VendorsListActivity.class);
         intent.putExtra("current-location", currentLocation);
-        intent.putExtra("number-of-bags", userCapacity);
         startActivity(intent);
     }
 }

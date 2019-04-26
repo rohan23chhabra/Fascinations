@@ -22,23 +22,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-class CustomAdapter extends ArrayAdapter<InventoryOwner> {
+class InventoryListAdapter extends ArrayAdapter<InventoryOwner> {
 
-    private ImageView imageView;
-    private TextView distanceView;
-    private TextView nameView;
-    private TextView capacityView;
-    private TextView phoneView;
-    private TextView addressView;
-    private TextView priceView;
-    private Button bookInventory;
     private Activity context;
     private List<InventoryOwner> ownerList;
     private Location currentLocation;
     private int userCapacity;
 
-    public CustomAdapter(Activity context, List<InventoryOwner> ownerList,
-                         Location currentLocation, int userCapacity) {
+    public InventoryListAdapter(Activity context,
+                                List<InventoryOwner> ownerList,
+                                Location currentLocation, int userCapacity) {
         super(context, R.layout.inventory_view);
         this.context = context;
         this.ownerList = ownerList;
@@ -46,18 +39,23 @@ class CustomAdapter extends ArrayAdapter<InventoryOwner> {
         this.userCapacity = userCapacity;
     }
 
-    @Override public View getView(int position, View convertView, ViewGroup parent) {
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = context.getLayoutInflater();
         convertView = inflater.inflate(R.layout.inventory_view, null, true);
 
-        imageView = convertView.findViewById(R.id.inventory_owner_photo);
-        distanceView = convertView.findViewById(R.id.show_owner_distance);
-        nameView = convertView.findViewById(R.id.show_owner_name);
-        capacityView = convertView.findViewById(R.id.show_owner_capacity);
-        phoneView = convertView.findViewById(R.id.show_owner_phone);
-        addressView = convertView.findViewById(R.id.show_owner_address);
-        priceView = convertView.findViewById(R.id.show_owner_price);
-        bookInventory = convertView.findViewById(R.id.book_inventory);
+        ImageView imageView =
+                convertView.findViewById(R.id.inventory_owner_photo);
+        TextView distanceView =
+                convertView.findViewById(R.id.show_owner_distance);
+        TextView nameView = convertView.findViewById(R.id.show_owner_name);
+        TextView capacityView =
+                convertView.findViewById(R.id.show_owner_capacity);
+        TextView phoneView = convertView.findViewById(R.id.show_owner_phone);
+        TextView addressView =
+                convertView.findViewById(R.id.show_owner_address);
+        TextView priceView = convertView.findViewById(R.id.show_owner_price);
+        Button bookInventory = convertView.findViewById(R.id.book_inventory);
 
         final InventoryOwner owner = ownerList.get(position);
         Picasso.get().load(owner.getImageURL())
@@ -66,9 +64,11 @@ class CustomAdapter extends ArrayAdapter<InventoryOwner> {
         inventoryLocation.setLatitude(owner.getLocation().latitude);
         inventoryLocation.setLongitude(owner.getLocation().longitude);
         double distance = currentLocation.distanceTo(inventoryLocation);
-        distanceView.setText("Distance: " + String.valueOf(Math.round(distance)) + "metre");
+        distanceView.setText(
+                "Distance: " + String.valueOf(Math.round(distance)) + "metre");
         nameView.setText("Owner Name: " + owner.getName());
-        capacityView.setText("Capacity: " + String.valueOf(owner.getCapacity()) + " bags");
+        capacityView.setText(
+                "Capacity: " + String.valueOf(owner.getCapacity()) + " bags");
         phoneView.setText("Phone: " + owner.getPhoneNumber());
         addressView.setText("Address: " + owner.getAddress());
         priceView.setText("Price per Bag: " + String.valueOf(owner.getPrice()));
@@ -77,25 +77,32 @@ class CustomAdapter extends ArrayAdapter<InventoryOwner> {
             @Override public void onClick(View v) {
 
                 String userPhoneNumber =
-                        new SessionDetails(context).getSharedPreferences().getString("phone",
-                                "8601444918");
+                        new SessionDetails(context).getSharedPreferences()
+                                .getString("phone",
+                                        "8601444918");
                 long currentTimeMillis = System.currentTimeMillis();
                 Date now = Calendar.getInstance().getTime();
 
-                InventoryRequest inventoryRequest = new InventoryRequest(userPhoneNumber,
-                        owner.getPhoneNumber(),
-                        now.getHours(), now.getMinutes(), now.getSeconds(), currentTimeMillis,
-                        userCapacity);
+                InventoryRequest inventoryRequest =
+                        new InventoryRequest(userPhoneNumber,
+                                owner.getPhoneNumber(),
+                                now.getHours(), now.getMinutes(),
+                                now.getSeconds(), currentTimeMillis,
+                                userCapacity);
                 owner.setCapacity(owner.getCapacity() - userCapacity);
-                DB.getDatabaseReference().child("inventory-owner").child(owner.getPhoneNumber())
+                DB.getDatabaseReference().child("inventory-owner")
+                        .child(owner.getPhoneNumber())
                         .child("capacity").setValue(owner.getCapacity());
                 DB.getDatabaseReference().child("pending-inventory-requests")
                         .child(userPhoneNumber).setValue(inventoryRequest);
 
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(
-                        "http://maps.google.com/maps?saddr=" + currentLocation.getLatitude() +
-                                "," + currentLocation.getLongitude() + "&daddr=" + owner
-                                .getLocation().latitude + "," + owner.getLocation().longitude));
+                        "http://maps.google.com/maps?saddr=" + currentLocation
+                                .getLatitude() +
+                                "," + currentLocation
+                                .getLongitude() + "&daddr=" + owner
+                                .getLocation().latitude + "," + owner
+                                .getLocation().longitude));
 
                 context.startActivity(intent);
             }

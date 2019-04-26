@@ -10,7 +10,7 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/inventory_owner_photo"
+            android:id="@+id/vendor_owner_photo"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_marginLeft="20dp"
@@ -20,65 +20,67 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/show_owner_distance"
+                android:id="@+id/show_vendor_distance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="XYZ"
                 android:textSize="15sp" />
 
             <TextView
-                android:id="@+id/show_owner_name"
+                android:id="@+id/show_vendor_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="XYZ"
                 android:textSize="15sp" />
 
             <TextView
-                android:id="@+id/show_owner_capacity"
+                android:id="@+id/show_vendor_phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="XYZ"
                 android:textSize="15sp" />
 
             <TextView
-                android:id="@+id/show_owner_phone"
+                android:id="@+id/show_vendor_category"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="XYZ"
                 android:textSize="15sp" />
 
             <TextView
-                android:id="@+id/show_owner_price"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="XYZ"
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/show_owner_address"
+                android:id="@+id/show_vendor_address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="XYZ"
                 android:textSize="15sp" />
 
-
         </LinearLayout>
 
     </LinearLayout>
 
-
-    <Button
-        android:id="@+id/book_inventory"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:text="BOOK" />
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/scan_qr_code"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="5dp"
+            android:text="Scan QR Code" />
+
+        <Button
+            android:id="@+id/rate_vendor"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:text="Rate" />
+    </LinearLayout>
 
 
 </LinearLayout>
-

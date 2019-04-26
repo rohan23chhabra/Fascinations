@@ -63,28 +63,36 @@ public class InventoryListActivity extends AppCompatActivity {
 
     private void getListOfInventories() {
 
-        DB.getDatabaseReference().child("inventory-owner").addValueEventListener(
-                new ValueEventListener() {
-                    @Override public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Iterator<DataSnapshot> dataSnapshotIterator =
-                                dataSnapshot.getChildren().iterator();
-                        ownerList.clear();
-                        while (dataSnapshotIterator.hasNext()) {
-                            DataSnapshot dataSnapshotChild = dataSnapshotIterator.next();
-                            Gson gson = MyGson.getGson();
-                            InventoryOwner owner =
-                                    gson.fromJson(gson.toJson(dataSnapshotChild.getValue()),
-                                            InventoryOwner.class);
-                            ownerList.add(owner);
-                        }
-                        CustomAdapter customAdapter =
-                                new CustomAdapter(InventoryListActivity.this, ownerList,
-                                        currentLocation, userCapacity);
-                        listView.setAdapter(customAdapter);
-                    }
+        DB.getDatabaseReference().child("inventory-owner")
+                .addValueEventListener(
+                        new ValueEventListener() {
+                            @Override public void onDataChange(
+                                    @NonNull DataSnapshot dataSnapshot) {
+                                Iterator<DataSnapshot> dataSnapshotIterator =
+                                        dataSnapshot.getChildren().iterator();
+                                ownerList.clear();
+                                while (dataSnapshotIterator.hasNext()) {
+                                    DataSnapshot dataSnapshotChild =
+                                            dataSnapshotIterator.next();
+                                    Gson gson = MyGson.getGson();
+                                    InventoryOwner owner =
+                                            gson.fromJson(gson.toJson(
+                                                    dataSnapshotChild
+                                                            .getValue()),
+                                                    InventoryOwner.class);
+                                    ownerList.add(owner);
+                                }
+                                InventoryListAdapter inventoryListAdapter =
+                                        new InventoryListAdapter(
+                                                InventoryListActivity.this,
+                                                ownerList,
+                                                currentLocation, userCapacity);
+                                listView.setAdapter(inventoryListAdapter);
+                            }
 
-                    @Override public void onCancelled(@NonNull DatabaseError databaseError) {
-                    }
-                });
+                            @Override public void onCancelled(
+                                    @NonNull DatabaseError databaseError) {
+                            }
+                        });
     }
 }

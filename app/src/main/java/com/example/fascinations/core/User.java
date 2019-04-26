@@ -1,14 +1,15 @@
 package com.example.fascinations.core;
 
 public class User {
-    String phoneNumber;
-    String password;
-    String email;
-    String name;
-    String imageURL;
-    int numberOfBags;
+    private String phoneNumber;
+    private String password;
+    private String email;
+    private String name;
+    private String imageURL;
+    private int numberOfBags;
 
-    public User(String phoneNumber, String password, String name, String email, String imageURL,
+    public User(String phoneNumber, String password, String name, String email,
+                String imageURL,
                 int numberOfBags) {
         this.phoneNumber = phoneNumber;
         this.password = password;

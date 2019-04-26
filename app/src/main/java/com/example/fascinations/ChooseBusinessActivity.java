@@ -20,16 +20,20 @@ public class ChooseBusinessActivity extends AppCompatActivity {
 
     public void inventoryOnClick(View view) {
         if (bagsText.getText().toString().equals("")) {
-            Toast.makeText(this, "Please enter number of bags.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter number of bags.",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
         int numberOfBags = Integer.parseInt(bagsText.getText().toString());
-        Intent intent = new Intent(ChooseBusinessActivity.this, InventoriesOnMapActivity.class);
+        Intent intent = new Intent(ChooseBusinessActivity.this,
+                InventoriesOnMapActivity.class);
         intent.putExtra("number-of-bags", numberOfBags);
         startActivity(intent);
     }
 
     public void foodVendorOnClick(View view) {
-
+        Intent intent = new Intent(ChooseBusinessActivity.this,
+                VendorsOnMapActivity.class);
+        startActivity(intent);
     }
 }
