@@ -2,6 +2,7 @@ package com.example.fascinations;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -10,11 +11,15 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.example.fascinations.core.InventoryOwner;
 import com.example.fascinations.db.DB;
 import com.example.fascinations.serialize.MyGson;
+import com.example.fascinations.util.SessionDetails;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -45,6 +50,7 @@ public class InventoriesOnMapActivity extends FragmentActivity
         OnMapReadyCallback {
 
     private GoogleMap googleMap;
+    private SharedPreferences.Editor editor;
     private FusedLocationProviderClient fusedLocationClient;
     private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION =
             100;
@@ -60,6 +66,7 @@ public class InventoriesOnMapActivity extends FragmentActivity
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager()
                         .findFragmentById(R.id.map);
+        editor = new SessionDetails(this).getEditor();
         mapFragment.getMapAsync(this);
         fusedLocationClient =
                 LocationServices.getFusedLocationProviderClient(this);
@@ -283,4 +290,7 @@ public class InventoriesOnMapActivity extends FragmentActivity
         intent.putExtra("number-of-bags", userCapacity);
         startActivity(intent);
     }
+
+
+
 }

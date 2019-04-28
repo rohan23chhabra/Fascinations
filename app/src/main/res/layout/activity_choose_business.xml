@@ -5,13 +5,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:orientation="vertical"
-    android:weightSum="110"
     tools:context=".ChooseBusinessActivity">
-
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="30" />
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
@@ -30,38 +24,46 @@
 
     <Button
         android:id="@+id/choose_inventory"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_weight="10"
+        android:layout_marginTop="20dp"
         android:onClick="inventoryOnClick"
         android:text="See inventories" />
 
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="30" />
 
     <Button
         android:id="@+id/choose_food_vendor"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dimen_10dp"
+        android:layout_marginRight="10dp"
         android:layout_gravity="center"
-        android:layout_weight="10"
+        android:layout_marginTop="30dp"
         android:onClick="foodVendorOnClick"
         android:text="Explore Food vendors" />
 
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="10" />
+    <Button
+        android:id="@+id/crowdsource"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dimen_10dp"
+        android:layout_marginRight="10dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/dimen_20dp"
+        android:onClick="crowdsource"
+        android:text="CrowdSource" />
 
     <Button
         android:id="@+id/btn_scan_qr_code"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="@dimen/dimen_10dp"
+        android:layout_marginRight="10dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_weight="10"
+        android:layout_marginTop="20dp"
         android:onClick="scanOnClick"
         android:text="Scan QR Code" />
 

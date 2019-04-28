@@ -49,6 +49,23 @@ public class LoginActivity
         sharedPreferences = getSharedPreferences("Session", MODE_PRIVATE);
         final SharedPreferences.Editor editor = sharedPreferences.edit();
 
+        if (!sharedPreferences.getString("phone", "#").equals("#") && !sharedPreferences.getString(
+                "password", "#").equals("#")) {
+            progressBar.setVisibility(View.VISIBLE);
+            loginButton.setEnabled(false);
+            Toast.makeText(LoginActivity.this, "Logging In", Toast.LENGTH_SHORT).show();
+            phoneNumber.setText(sharedPreferences.getString("phone", "#"));
+            passwordText.setText(sharedPreferences.getString(
+                    "password", "#"));
+
+            Intent intent = new Intent(
+                    LoginActivity.this,
+                    ChooseBusinessActivity.class);
+            LoginActivity.this.startActivity(intent);
+            finish();
+        }
+
+
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
 
@@ -59,8 +76,7 @@ public class LoginActivity
                 ConnectivityManager connectivityManager =
                         (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-                if((networkInfo!=null)&&(networkInfo.isConnected()))
-                {
+                if ((networkInfo != null) && (networkInfo.isConnected())) {
                     loginButton.setVisibility(View.GONE);
                     phoneNumber.setEnabled(false);
                     passwordText.setEnabled(false);
@@ -80,7 +96,8 @@ public class LoginActivity
                                     String hash1 = user.getPassword();
                                     String hash2 =
                                             SecurePassword.getHashedPassword(
-                                                    passwordText.getText().toString(), phone_number);
+                                                    passwordText.getText().toString(),
+                                                    phone_number);
                                     if (hash1.equals(hash2)) {
                                         Log.i("login", "Successful login.");
                                         editor.putString("phone", phone_number);
@@ -101,10 +118,9 @@ public class LoginActivity
 
                                 }
                             });
-                }
-                else
-                {
-                    Toast.makeText(LoginActivity.this,"No network connection",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(LoginActivity.this, "No network connection", Toast.LENGTH_SHORT)
+                            .show();
                 }
 
             }
