@@ -2,29 +2,16 @@ package com.example.fascinations;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.fascinations.core.VendorOwner;
 import com.example.fascinations.core.VendorTransaction;
-import com.example.fascinations.db.DB;
-import com.example.fascinations.serialize.MyGson;
-import com.example.fascinations.util.SessionDetails;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
-import java.util.Calendar;
-import java.util.Date;
 
 public class QRCodeScannerActivity extends AppCompatActivity {
 
@@ -73,43 +60,49 @@ public class QRCodeScannerActivity extends AppCompatActivity {
             phoneNumber = scanContent;
             textView.setText("You interacted with a local food vendor " +
                     "business whose phone number is " + phoneNumber);
-            final String userPhoneNumber =
-                    new SessionDetails(this).getSharedPreferences()
-                            .getString("phone", "");
-            DB.getDatabaseReference().child("vendor-owner").child(phoneNumber)
-                    .addValueEventListener(
-                            new ValueEventListener() {
-                                @Override public void onDataChange(
-                                        @NonNull DataSnapshot dataSnapshot) {
-                                    Gson gson = MyGson.getGson();
-                                    QRCodeScannerActivity.this.vendorOwner =
-                                            gson.fromJson(gson.toJson(
-                                                    dataSnapshot.getValue()),
-                                                    VendorOwner.class);
-                                    Log.i("mc-interact",
-                                            vendorOwner.toString());
-                                }
 
-                                @Override public void onCancelled(
-                                        @NonNull DatabaseError databaseError) {
+            Intent intent = new Intent(QRCodeScannerActivity.this,
+                    TakeOrderActivity.class);
+            intent.putExtra("qr-phone", phoneNumber);
+            startActivity(intent);
 
-                                }
-                            });
-            new Handler().postDelayed(new Runnable() {
-                @Override public void run() {
-                    Date now = Calendar.getInstance().getTime();
-                    QRCodeScannerActivity.this.vendorTransaction =
-                            new VendorTransaction(userPhoneNumber,
-                                    phoneNumber,
-                                    vendorOwner.getFoodCategory(),
-                                    now.getHours(), now.getMinutes(),
-                                    now.getSeconds());
-                    DB.getDatabaseReference().child("vendor-transaction")
-                            .child(userPhoneNumber)
-                            .setValue(vendorTransaction);
-                    Log.i("bc-transaction", vendorTransaction.toString());
-                }
-            }, 2000);
+//            final String userPhoneNumber =
+//                    new SessionDetails(this).getSharedPreferences()
+//                            .getString("phone", "");
+//            DB.getDatabaseReference().child("vendor-owner").child(phoneNumber)
+//                    .addValueEventListener(
+//                            new ValueEventListener() {
+//                                @Override public void onDataChange(
+//                                        @NonNull DataSnapshot dataSnapshot) {
+//                                    Gson gson = MyGson.getGson();
+//                                    QRCodeScannerActivity.this.vendorOwner =
+//                                            gson.fromJson(gson.toJson(
+//                                                    dataSnapshot.getValue()),
+//                                                    VendorOwner.class);
+//                                    Log.i("mc-interact",
+//                                            vendorOwner.toString());
+//                                }
+//
+//                                @Override public void onCancelled(
+//                                        @NonNull DatabaseError databaseError) {
+//
+//                                }
+//                            });
+//            new Handler().postDelayed(new Runnable() {
+//                @Override public void run() {
+//                    Date now = Calendar.getInstance().getTime();
+//                    QRCodeScannerActivity.this.vendorTransaction =
+//                            new VendorTransaction(userPhoneNumber,
+//                                    phoneNumber,
+//                                    vendorOwner.getFoodCategory(),
+//                                    now.getHours(), now.getMinutes(),
+//                                    now.getSeconds());
+//                    DB.getDatabaseReference().child("vendor-transaction")
+//                            .child(userPhoneNumber)
+//                            .setValue(vendorTransaction);
+//                    Log.i("bc-transaction", vendorTransaction.toString());
+//                }
+//            }, 2000);
 
         } else {
             Toast.makeText(this, "Nothing scanned", Toast.LENGTH_SHORT).show();

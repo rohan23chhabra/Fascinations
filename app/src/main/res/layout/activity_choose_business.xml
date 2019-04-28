@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     android:orientation="vertical"
-    android:background="@color/colorPrimary"
     android:weightSum="110"
     tools:context=".ChooseBusinessActivity">
 
@@ -22,6 +22,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:hint="Enter no of bags to store in inventory"
             android:inputType="number" />
     </android.support.design.widget.TextInputLayout>
@@ -52,6 +54,15 @@
     <View
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_weight="30" />
+        android:layout_weight="10" />
+
+    <Button
+        android:id="@+id/btn_scan_qr_code"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_weight="10"
+        android:onClick="scanOnClick"
+        android:text="Scan QR Code" />
 
 </LinearLayout>

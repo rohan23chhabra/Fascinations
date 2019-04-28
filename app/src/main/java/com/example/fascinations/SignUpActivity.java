@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.fascinations.core.User;
+import com.example.fascinations.security.SecurePassword;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -40,11 +41,11 @@ public class SignUpActivity
     private static final int PICK_IMAGE_REQUEST = 71;
     EditText emailText;
     EditText passwordText;
+    EditText confirmPassword;
+    EditText nameText;
     Button signUpButton;
     Button uploadPhotoButton;
     String phoneNumber;
-    EditText confirmPassword;
-    EditText nameText;
     Bitmap bitmap;
     Uri filePath;
     ImageView imageView;
@@ -97,6 +98,10 @@ public class SignUpActivity
 
         signUpButton.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
+        emailText.setEnabled(false);
+        passwordText.setEnabled(false);
+        confirmPassword.setEnabled(false);
+        nameText.setEnabled(false);
         if (!passwordText.getText().toString()
                 .equals(confirmPassword.getText().toString())) {
             Toast.makeText(SignUpActivity.this, "Passwords don't " +
@@ -105,9 +110,11 @@ public class SignUpActivity
             return;
         }
 
+        String encryptedPassword =
+                SecurePassword.getHashedPassword(passwordText.getText().toString(), phoneNumber);
+
         String email = emailText.getText().toString();
-        user = new User(phoneNumber,
-                passwordText.getText().toString(),
+        user = new User(phoneNumber, encryptedPassword,
                 nameText.getText().toString(), email, null, 0);
 
         uploadImage();

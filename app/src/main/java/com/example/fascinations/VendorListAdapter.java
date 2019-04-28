@@ -46,7 +46,7 @@ public class VendorListAdapter extends ArrayAdapter<VendorOwner> {
         TextView phoneView = convertView.findViewById(R.id.show_vendor_phone);
         TextView addressView =
                 convertView.findViewById(R.id.show_vendor_address);
-        Button scanQRCode = convertView.findViewById(R.id.scan_qr_code);
+        Button orderButton = convertView.findViewById(R.id.scan_qr_code);
         Button rateButton = convertView.findViewById(R.id.rate_vendor);
 
         final VendorOwner vendorOwner = vendorOwnerList.get(position);
@@ -64,10 +64,13 @@ public class VendorListAdapter extends ArrayAdapter<VendorOwner> {
         phoneView.setText("Phone: " + vendorOwner.getPhoneNumber());
         addressView.setText("Address: " + vendorOwner.getAddress());
 
-        scanQRCode.setOnClickListener(new View.OnClickListener() {
+        orderButton.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
                 Intent intent = new Intent(context,
-                        QRCodeScannerActivity.class);
+                        TakeOrderActivity.class);
+                intent.putExtra("vendor-location", vendorOwner.getLocation());
+                vendorOwner.setLocation(null);
+                intent.putExtra("vendor-owner", vendorOwner);
                 context.startActivity(intent);
             }
         });

@@ -36,4 +36,9 @@ public class ChooseBusinessActivity extends AppCompatActivity {
                 VendorsOnMapActivity.class);
         startActivity(intent);
     }
+
+    public void scanOnClick(View view) {
+        Intent intent = new Intent(this, QRCodeScannerActivity.class);
+        startActivity(intent);
+    }
 }

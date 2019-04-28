@@ -1,12 +1,19 @@
 package com.example.fascinations.core;
 
-public class VendorTransaction {
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+public class VendorTransaction implements Serializable {
     private String userPhoneNumber;
     private String vendorPhoneNumber;
     private FoodCategory foodCategory;
     private int hours;
     private int minutes;
     private int seconds;
+    private Map<String, Integer> orderMap = new HashMap<>();
+    private int transactionId;
+    private int amount;
 
     public VendorTransaction(String userPhoneNumber,
                              String vendorPhoneNumber,
@@ -77,5 +84,29 @@ public class VendorTransaction {
                 ", minutes=" + minutes +
                 ", seconds=" + seconds +
                 '}';
+    }
+
+    public Map<String, Integer> getOrderMap() {
+        return orderMap;
+    }
+
+    public void setOrderMap(Map<String, Integer> orderMap) {
+        this.orderMap = orderMap;
+    }
+
+    public int getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(int transactionId) {
+        this.transactionId = transactionId;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 }

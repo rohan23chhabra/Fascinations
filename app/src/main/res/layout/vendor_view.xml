@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
+    android:background="@android:color/white"
     android:orientation="vertical">
 
     <LinearLayout
@@ -12,14 +12,16 @@
         <ImageView
             android:id="@+id/vendor_owner_photo"
             android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_height="135dp"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
             android:src="@drawable/ic_launcher_foreground" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="20dp"
             android:orientation="vertical">
 
@@ -28,35 +30,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="XYZ"
-                android:textSize="15sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/show_vendor_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="XYZ"
-                android:textSize="15sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/show_vendor_phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="XYZ"
-                android:textSize="15sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/show_vendor_category"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="XYZ"
-                android:textSize="15sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/show_vendor_address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="XYZ"
-                android:textSize="15sp" />
+                android:textSize="20sp" />
 
         </LinearLayout>
 
@@ -64,23 +66,41 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:weightSum="100">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="10" />
 
         <Button
             android:id="@+id/scan_qr_code"
             android:layout_width="170dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="5dp"
-            android:text="Scan QR Code" />
+            android:layout_weight="35"
+            android:layout_marginLeft="60dp"
+            android:layout_gravity="center_horizontal"
+            android:text="Order" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="10" />
 
         <Button
             android:id="@+id/rate_vendor"
             android:layout_width="170dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
+            android:layout_weight="35"
+            android:visibility="gone"
             android:text="Rate" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="10" />
+
     </LinearLayout>
 
 
