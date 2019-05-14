@@ -1,13 +1,14 @@
 package com.example.fascinations.core;
 
 public class InventoryRequest {
-    String userPhoneNumber;
-    String ownerPhoneNumber;
-    int hours;
-    int minutes;
-    int seconds;
-    long currentTimeMillis;
-    int numberOfBags;
+    private String userPhoneNumber;
+    private String ownerPhoneNumber;
+    private int hours;
+    private int minutes;
+    private int seconds;
+    private long currentTimeMillis;
+    private int numberOfBags;
+    private int requestId;
 
 
     public InventoryRequest(String userPhoneNumber, String ownerPhoneNumber, int hours, int minutes,
@@ -75,6 +76,14 @@ public class InventoryRequest {
 
     public void setCurrentTimeMillis(long currentTimeMillis) {
         this.currentTimeMillis = currentTimeMillis;
+    }
+
+    public int getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(int requestId) {
+        this.requestId = requestId;
     }
 
     public InventoryRequest() {

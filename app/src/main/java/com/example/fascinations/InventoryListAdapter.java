@@ -21,6 +21,9 @@ import com.squareup.picasso.Picasso;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
 
 class InventoryListAdapter extends ArrayAdapter<InventoryOwner> {
 
@@ -28,6 +31,9 @@ class InventoryListAdapter extends ArrayAdapter<InventoryOwner> {
     private List<InventoryOwner> ownerList;
     private Location currentLocation;
     private int userCapacity;
+    private Integer requestId;
+    private Set<String> requestIdSet;
+    private static final int REQUEST_ID_LIMIT = 1000000;
 
     public InventoryListAdapter(Activity context,
                                 List<InventoryOwner> ownerList,
@@ -83,18 +89,22 @@ class InventoryListAdapter extends ArrayAdapter<InventoryOwner> {
                 long currentTimeMillis = System.currentTimeMillis();
                 Date now = Calendar.getInstance().getTime();
 
+
                 InventoryRequest inventoryRequest =
                         new InventoryRequest(userPhoneNumber,
                                 owner.getPhoneNumber(),
                                 now.getHours(), now.getMinutes(),
                                 now.getSeconds(), currentTimeMillis,
                                 userCapacity);
+                SessionDetails sessionDetails = new SessionDetails(context);
+                setRequestId(sessionDetails);
+                inventoryRequest.setRequestId(requestId);
                 owner.setCapacity(owner.getCapacity() - userCapacity);
                 DB.getDatabaseReference().child("inventory-owner")
                         .child(owner.getPhoneNumber())
                         .child("capacity").setValue(owner.getCapacity());
                 DB.getDatabaseReference().child("pending-inventory-requests")
-                        .child(userPhoneNumber).setValue(inventoryRequest);
+                        .child(String.valueOf(requestId)).setValue(inventoryRequest);
 
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(
                         "http://maps.google.com/maps?saddr=" + currentLocation
@@ -109,6 +119,24 @@ class InventoryListAdapter extends ArrayAdapter<InventoryOwner> {
         });
 
         return convertView;
+    }
+
+    private void setRequestId(SessionDetails sessionDetails) {
+        if (sessionDetails.getSharedPreferences()
+                .getStringSet("request-id-set", null) == null) {
+            requestId = new Random().nextInt(REQUEST_ID_LIMIT);
+            requestIdSet = new TreeSet<>();
+            requestIdSet.add(requestId.toString());
+        } else {
+            requestIdSet = sessionDetails.getSharedPreferences().getStringSet("request-id" +
+                    "-set", null);
+            assert requestIdSet != null;
+            do {
+                requestId = new Random().nextInt(REQUEST_ID_LIMIT);
+            } while (requestIdSet.contains(requestId.toString()));
+            requestIdSet.add(requestId.toString());
+        }
+        sessionDetails.getEditor().putStringSet("request-id-set", requestIdSet);
     }
 
     @Override public int getCount() {

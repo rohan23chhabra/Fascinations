@@ -11,9 +11,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 
 import com.example.fascinations.core.InventoryOwner;
@@ -290,7 +287,4 @@ public class InventoriesOnMapActivity extends FragmentActivity
         intent.putExtra("number-of-bags", userCapacity);
         startActivity(intent);
     }
-
-
-
 }

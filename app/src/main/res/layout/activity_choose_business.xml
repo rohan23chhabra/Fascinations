@@ -53,7 +53,7 @@
         android:layout_marginRight="10dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/dimen_20dp"
-        android:onClick="crowdsource"
+        android:onClick="crowdSourceOnClick"
         android:text="CrowdSource" />
 
     <Button

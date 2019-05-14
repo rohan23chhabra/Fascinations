@@ -77,9 +77,9 @@ public class ChooseBusinessActivity extends AppCompatActivity {
 
     }
 
-    public void crowdsource(View view) {
-            Intent intent = new Intent(ChooseBusinessActivity.this,SignUpVendorActivity.class);
-            startActivity(intent);
+    public void crowdSourceOnClick(View view) {
+        Intent intent = new Intent(ChooseBusinessActivity.this, SignUpVendorActivity.class);
+        startActivity(intent);
 
     }
 }
